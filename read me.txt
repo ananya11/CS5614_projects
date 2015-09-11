@@ -1,0 +1,41 @@
+1. Change solrconfig.xml located at
+
+Macintosh HD ▸ Users ▸ ananya ▸ Desktop ▸ VtStudy ▸ solr ▸ solr-4.10.2 ▸ example ▸ solr ▸ collection1
+
+2. edit VM_global_library.vm in
+Macintosh HD ▸ Users ▸ ananya ▸ Desktop ▸ VtStudy ▸ solr ▸ solr-4.10.2 ▸ example ▸ solr ▸ collection1 ▸ conf ▸ velocity
+
+3. created a file cqlayout.vm at the above location
+
+4. created a file custom.vm at the same location 
+
+5. Update schema.xml located at 
+Macintosh HD ▸ Users ▸ ananya ▸ Desktop ▸ VtStudy ▸ solr ▸ solr-4.10.2 ▸ example ▸ solr ▸ collection1
+
+6. join_doc.vm , query_form.vm, query.vm in 
+Macintosh HD ▸ Users ▸ ananya ▸ Desktop ▸ VtStudy ▸ solr ▸ solr-4.10.2 ▸ example ▸ solr ▸ collection1 ▸ conf ▸ velocity
+
+and 
+
+Macintosh HD ▸ Users ▸ ananya ▸ Desktop ▸ VtStudy ▸ solr ▸ solr-4.10.2 ▸ node1 ▸ solr ▸ collection1 ▸ conf ▸ velocity
+
+---------------------------------------------------
+
+to delete indexed data:
+java -Ddata=args org.apache.solr.util.SimplePostTool "<delete><id>978-1857995879</id></delete>"
+
+to stop solr:
+bin/solr stop -all ; rm -Rf node1/ node2/
+
+to start solr:
+bin/solr start -e cloud -noprompt
+
+to upload data:
+export CLASSPATH=dist/solr-core-4.10.2.jar
+java -Dauto -Drecursive org.apache.solr.util.SimplePostTool docs/
+
+http://velocity.apache.org/engine/releases/velocity-1.7/user-guide.html
+http://pixedin.blogspot.com/2012/05/howto-solr-building-custom-search_21.html
+http://lucene.apache.org/solr/quickstart.html
+http://www.tnrglobal.com/blog/2010/07/how-to-index-a-site-with-python-using-solrpy-and-a-sitemap/
+

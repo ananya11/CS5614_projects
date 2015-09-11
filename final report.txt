@@ -1,0 +1,61 @@
+Introduction/Motivation:
+Twitter is a fantastic channel for communication during disasters. With more than 100 million users,  it's microblogging service is an apt medium to receive and exchange information. With brevity guaranteed by a 140- character-message limitation and the popularity of Twitter mobile applications, users tweet and retweet instantly. Everyday, nearly 340 million tweets are created and redistributed by all these active users.
+
+As tweets are created in real time, in recent years this social media platform has acted as an active communication channel in times of emergency as a result of which voluminous amount of data is generated. Processing such big data to obtain relevant information involves multiple challenges including handling information overload, filtering credible information and categorizing data into different classes. Another significant challenge twitter data analyst face today is the filtering of data between relevant and non-relevant as the number of spam tweets have increased exponentially with the increase of Twitter’s popularity. Also, there is no single data streamlining system that concentrates only on disaster. Emergency Management organizations/Historians who analyze prior disasters are often overwhelmed by this amount of data and lack of any proper engine to sieve through the noise. The motivation of the project comes from these challenges. 
+
+The goal of our work is to provide an efficient way to classify tweets into relevant and non relevant based on the tweet text and extract URLs from those tweets related to a disaster . We then fetch important text from the corresponding webpages and index it to Apache Solr for fast and efficient information retrieval.
+Our approach is unique because our final goal is to create a web archived search engine specific to disasters. We also provide two step filtering: first classifying tweets and then extracting relevant texts from the web pages referred to in those tweets thereby providing a whole new dimension to the first step by using the tweet URLs as meta information sources for the tweet labeling.
+
+------------------------------------------------------------------------------------- 
+
+4. DATASETWe used dataset which contains tweets related to Ebola in multiple languages such as English, Spanish, French, etc. This tweets are collected from March 29, 2014  till Oct 22, 2014 available in http://cinnamon.dlib .vt.edu/twitter/. The entire dataset is received from Digital Libraries Research Lab, Virginia Tech. There are about 3 million tweets in the corpus. We created a sample of 5000 tweets by randomly collecting 4 sets of 1000 tweets across multiple timelines.
+5. PREPROCESSINGThe goal of the preprocessing part is to get the tweets in English language and which contains URLs. Atleast one URL (in case of multiple URLs) in the tweet should be valid. We validated the urls using regular expression.
+6. DATA ACQUISITIONWe extracted the required information for our data modeling. The dataset is a .csv file containing following information for each tweet: archive source, text, to_user_id, from_user, id, from_user_id, iso_language_code, source, profile_image_url, geo_type, geo_coordinates_0, geo_coordinates_1, created_at, time. In order to get the required information we used the pandas package in python to read the file. We created a parser that identifies tweets with only valid URLs. We manually analyzed and created the learning dataset for the classifiers by classifying the sample data of 5000 tweets into relevant and non relevant labels. 
+
+--------------------------------------------------------------------------------------------
+
+Problem Faced:
+
+We faced numerous problems:
+1. Identifying non-relevant datasets. We wanted to create a strong support vector based on boundary conditions that accurately demarcated relevant and non-relevant tweets. 
+2.  As the length of the text is small (140 characters), identifying features for correct classification and improving Recall was extremely tough.
+<add ur part>
+3. Working with SolR and Velocity was challenging. There is very less documentation available online  about the interface, which made indexing text to SolR and modifying the search interface (Velocity) challenging.
+
+--------------------------------------------------------------------------------------------- 
+
+Index to SolR:
+
+Sold is a open source Java search server. The extracted data is in text format. Before the files are indexed to Solr, the schema.xml in Solr needs to be configured.
+The text is tokenized using solr.StandardTokenizerFactory. 
+<Figure 1>
+
+The text is then converted into inverted-index
+ <Figure 2>
+Finally the data is indexed into Solr. The indexed data can be searched and retrieved in Velocity, a configurable search interface of Solr.
+<add jpeg of GRID>
+
+-------------------------------------------------------------------------------------------------
+
+Proposed Method:
+
+1. Twitter data analysis is a hot topic . Unfortunately, most state-of-the-art research on twitter data analysis is mostly limited to sentiment analysis. Although few research related to disaster are going on, they mainly concentrate on extracting information only from the tweets and at real time. 
+
+We deviate slightly here. Our classifier analyzes tweets to find links to webpages that contain more information about the disaster.  And we have classify tweets of disasters that have already occurred. We take our project further to create a corpus of only relevant data associated with a disaster and finally present an efficient way to retrieve these information. There has been no work that we know of which extracts information from webpages extracted from twitter dataset and presented this entire pipeline  of information retrieval.
+
+2. As shown in <Fig. ClassificationPipeline> ,  we analyzed the data and manually labelled the tweets as relevant and not relevant. We achieved an accuracy of 80% and almost similar precision but our recall rate was less. To improve performance, we analyzed the dataset again. We created a training corpus of equal number of relevant and non-relevant tweets. We considered only boundary conditions for non-relevant tweets to create a strong distinction between the two labels and better train the classifier. 
+For ex: "Ebola 'a Regional Threat' as Contagion Hits Guinea Capital #Health http://t.co/SQcCExqRc0" is labelled as relevant .
+"Guinea Ebola 'a regional threat' http://t.co/xrO1SUoPBt" is labelled as non-relevant.
+
+We used both Multinomial NaiveBayes and LinearSVC for classification. We noticed NaiveBayes performs better than Linear SVC. A primary reason for this is the training corpus which is comparatively smaller and NaiveBayes performs better on smaller dataset. 
+
+From the relevant tweets, we extracted urls . In twitter the urls are shortened. We unshortened the urls using MapReduce programming in AWS . These urls are unshortened using HttpClient. We then extract text from the webpages using BeautifulSoup, a module in python . We finally index all these text in Solr using sunburnt , a module in python and SimplePostTool , a tool that comes with Solr. The indexed files can viewed using Velocity, a search based interface that works with Solr.
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
